@@ -1,6 +1,187 @@
 {
-  "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+	"rules": {
+    ".read": false,
+    ".write": false,
+    "version" : {
+      ".read" : true
+    },
+    "users": {
+        ".indexOn": ["cname", "name", "uid"]
+    },
+    "v1" : {
+      "cmdrs" : {
+        ".read" : "(auth != null)",
+        ".indexOn": ["cname", "name"],
+        "$cmdrid": {
+					".write" : "auth != null && !data.exists()",
+          ".validate" : "newData.hasChildren(['name', 'uid'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length <= 255"
+          },
+          "uid": {
+            ".validate": "newData.val() === auth.uid"
+          },
+          "$other" : {
+            ".validate": false
+          }
+        }
+      },
+      "systems" : {
+        ".read": "(auth != null)",
+        ".indexOn": ["cname", "name", "timestamp"],
+        "$systemid" : {
+          ".write" : "auth != null && !data.exists()",
+          ".validate" : "newData.hasChildren(['name', 'uid'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length <= 255"
+          },
+					"uid": {
+          	".validate": "newData.val() === auth.uid"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "notams" : {
+        ".read": "(auth != null)",
+        ".indexOn": ["cname", "name", "timestamp"]
+      },
+      "blips" : {
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/blips/r/').val() === true",
+        "$cmdrid" : {
+          ".write": "(auth != null) && !data.exists() && root.child('users/' + auth.uid +'/p/blips/w/').val() === true",
+          ".indexOn": ["cmdr", "timestamp"],
+          ".validate": "root.child('v1/cmdrs/' + $cmdrid).exists()",
+          "$blipid" : {
+            ".indexOn": ["timestamp"],
+            ".write": "auth != null && !data.exists() && root.child('users/' + auth.uid +'/p/blips/w/').val() === true",
+            ".validate": "newData.hasChildren(['cmdr', 'starSystem', 'place', 'timestamp', 'source', 'reportedBy', 'ship', 'uid'])",
+            "cmdr": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "starSystem": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "place": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "source": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "reportedBy": {
+              ".validate": "newData.isString() && newData.val().length <= 255 && newData.val() == root.child('users/' + auth.uid +'/name/').val()"
+            },
+            "ship": {
+              ".validate": "(newData.val() == 'Unknown' || root.child('ships/' + newData.val()).exists())"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "uid": {
+              ".validate": "newData.val() === auth.uid && root.child('users/' + auth.uid).exists()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      },
+      "traffic" : {
+        //".read" : "(auth != null) && root.child('users').child(auth.uid).child('trusted').val() == true",
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/traffic/r/').val() === true",
+        "$systemid" : {
+          ".write": "(auth != null) && !data.exists() && root.child('users/' + auth.uid +'/p/traffic/w/').val() === true",
+          ".indexOn": ["cmdr", "timestamp"],
+          ".validate": "root.child('v1/systems/' + $systemid).exists()",
+          "$trafficid" : {
+            ".indexOn": ["timestamp"],
+            ".write": "auth != null && !data.exists() && root.child('users/' + auth.uid +'/p/traffic/w/').val() === true",
+            ".validate": "newData.hasChildren(['cmdr', 'starSystem', 'place', 'timestamp', 'source', 'reportedBy', 'ship', 'uid'])",
+            "cmdr": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "starSystem": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "place": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "source": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+  					"reportedBy": {
+              ".validate": "newData.isString() && newData.val().length <= 255 && newData.val() == root.child('users/' + auth.uid +'/name/').val()"
+            },
+            "ship": {
+              ".validate": "(newData.val() == 'Unknown' || root.child('ships/' + newData.val()).exists())"
+            },
+            "uid": {
+              ".validate": "newData.val() === auth.uid && root.child('users/' + newData.val()).exists()"
+            },
+            "$other": {
+              ".validate": false
+            } 
+          }
+        }
+      },
+      "crimes" : {
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/crimes/r/').val() === true",
+        "$systemid" : {
+          ".write": "(auth != null) && !data.exists() && root.child('users/' + auth.uid +'/p/crimes/w/').val() === true",
+          ".indexOn": ["timestamp"],
+          ".validate": "root.child('v1/systems/' + $systemid).exists()",
+          "$crimeid" : {
+            ".indexOn": ["timestamp"],
+            ".write": "auth != null && !data.exists() && root.child('users/' + auth.uid +'/p/crimes/w/').val() === true",
+            ".validate": "newData.hasChildren(['starSystem', 'place', 'timestamp', 'criminals', 'offence', 'victim', 'victimShip', 'reportedBy', 'uid'])",
+            "starSystem": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "place": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "offence": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "reportedBy": {
+              ".validate": "newData.isString() && newData.val().length <= 255 && newData.val() == root.child('users/' + auth.uid +'/name/').val()"
+            },
+            "victim": {
+              ".validate": "newData.isString() && newData.val().length <= 255"
+            },
+            "victimShip": {
+              ".validate": "newData.isString() && (newData.val() == 'Unknown' || root.child('ships/' + newData.val()).exists())"
+            },
+            "criminals" : {
+              "$criminal" : {
+                ".validate": "newData.hasChildren(['name', 'ship'])",
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length <= 255"
+                },
+                "ship": {
+                  ".validate": "newData.isString() && (newData.val() == 'Unknown' || root.child('ships/' + newData.val()).exists())"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              }
+            },
+            "uid": {
+              ".validate": "newData.val() === auth.uid && root.child('users/' + newData.val()).exists()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    }
   }
 }

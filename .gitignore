@@ -1,2 +1,4 @@
-
 *.code-workspace
+bower_components/
+build/
+node_modules/
