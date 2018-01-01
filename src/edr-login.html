@@ -1,0 +1,86 @@
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="edr-login">
+    <template>
+        <style>
+            :host {
+                display: block;
+                padding: 16px;
+                --primary-color:  #FF6F00;
+                --primary-text-color: #FF6F00;
+                --secondary-text-color: #ffb000;
+                --error-color: #CA0707;
+            }
+
+            paper-button.login {
+                background-color: var(--app-orange-ui-inactive-bg-color);
+                color: var(--app-orange-ui-inactive-fg-color);
+            }
+
+            paper-button.login:focus, paper-button.login:hover {
+                background-color:var(--app-orange-ui-active-bg-color);
+                color: var(--app-orange-ui-active-fg-color);
+            }
+        </style>
+
+        <firebase-auth
+            id="auth" user="{{user}}"
+            provider="password"
+            on-error="handleError">
+        </firebase-auth>
+
+        <template is="dom-if" if="[[user]]">
+            <div>You are signed in.</div>
+            <paper-button raised on-tap="logout" hidden$="[[!user]]" class="login">Sign out</paper-button>
+        </template>
+        <div hidden$="[[user]]">
+            <paper-input label="Username (email)" id="email" required auto-validate error-message="Needs a valid email address!"></paper-input>
+            <paper-input label="password" id="password" type="password" required></paper-input>
+            <paper-button raised on-tap="login" class="login">Sign in</paper-button>
+            <div hidden$="[[error]]">Login failed. Verify that both the email and password are correct.</div>
+        </div>
+    </template>
+    <script>
+         class EDRLogin extends Polymer.Element {
+             static get is() { return 'edr-login'; }
+
+             static get properties() {
+                return {
+                    user: {
+                        type: Object
+                    },
+                    error: {
+                        type: Boolean
+                    }
+                }
+            }
+
+            login() {
+                var email = this.$.email.value;
+                var password = this.$.password.value;
+                console.log(`Login for ${email} with ${password}`);
+
+                var error = false;
+                firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+                    error = true;
+                });
+
+                if (error) {
+                    this.error = true;
+                }
+            }
+
+            logout() {
+                console.log(`Logout ${this.user}`);
+                return this.$.auth.signOut();
+            }
+         }
+
+         customElements.define(EDRLogin.is, EDRLogin);
+    </script>
+
+</dom-module>

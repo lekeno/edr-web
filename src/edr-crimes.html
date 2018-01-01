@@ -1,0 +1,158 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="edr-crimes">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        color: white;
+        padding: 10px;
+      }
+    </style>
+
+    <firebase-auth user="{{user}}"></firebase-auth>
+    <firebase-query
+      id="query"
+      path="/v1/crimes"
+      data="{{crimes}}"
+      limit-to-last="10"
+      order-by-child="timestamp">
+    </firebase-query>
+    <template is="dom-repeat" items="[[_toArray(crimes)]]" as="crime">
+        <div class="card">
+            <div class="boxed">[[_compactTimelapse(crime)]]</div>
+            <h1>[[crime.starSystem]]</h1>
+            <p>[[_readableCrime(crime)]]</p>
+        </div>
+    </template>
+  </template>
+
+  <script>
+    class EDRCrimes extends Polymer.Element {
+      static get is() { return 'edr-crimes'; }
+
+      static get properties() {
+        return {
+          crimes: {
+            type: Object,
+            observer: 'dataChanged'
+          }
+        }
+      }
+
+      _toArray(obj) {
+        var array = [];
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            console.log(key);
+            for (var id in obj[key]) {
+              if (id != "$key" && obj[key].hasOwnProperty(id)) {
+                console.log(id);
+                array.push(
+                  obj[key][id]
+                );
+              }
+            }
+          }
+        }
+        return array.reverse();
+      }
+
+      _compactTimelapse(crime) {
+        var timestamp= crime["timestamp"];
+        var present = Date.now();
+        
+        var qualifier = "T-";
+        if (timestamp > present) qualifier = "T+"
+
+        var delta = Math.abs(present - timestamp) / 1000;
+        
+        var days = Math.floor(delta / 86400);
+        delta -= days * 86400;
+        
+        var hours = Math.floor(delta / 3600) % 24;
+        delta -= hours * 3600;
+
+        var minutes = Math.floor(delta / 60) % 60;
+        delta -= minutes * 60;
+
+        var seconds = Math.floor(delta % 60);
+
+        if (days > 0) {
+            let readable = String("  " + days).slice(-2) + "d";
+            if (days > 99) {
+                readable = days + "d";
+            }
+
+            if (hours > 0) {
+                readable += ":" + String("00" + hours).slice(-2)  +"h"
+            } else {
+                readable += "    "
+            }
+
+            return qualifier + readable;
+        }
+
+        if (hours > 0) {
+            let readable = String("00" + hours).slice(-2) + "h";
+            if (minutes > 0) {
+                readable += ":" + String("00" + minutes).slice(-2) +"m"
+            } else {
+                readable += "    "
+            }
+
+            return qualifier + readable;
+        }
+
+        if (minutes > 0) {
+            let readable = "    " + String("00" + minutes).slice(-2) + "m"
+            
+            return qualifier + readable;
+        }
+
+        return qualifier + "    " +  String("00" + seconds).slice(-2) + "s";
+      }
+
+      _readableCrime(crime) {
+        let lutOffences = {
+            "Interdiction" : "interdicted",
+            "Interdicted" : "interdicted",
+            "EscapeInterdiction": "attempted to interdict",
+            "Murder" : "killed",
+            "Failed interdiction": "attempted to interdict"
+        };
+
+        console.log("criminals nb: " + crime["criminals"].length)
+        let criminal = crime["criminals"][0];
+        let msg = criminal["name"];
+        if (criminal["ship"] != "Unknown") {
+            msg +=  " (" + criminal["ship"] + ")";
+        }
+        var offence = lutOffences[crime["offence"]];
+        if (offence === undefined) { offence = crime["offence"]; }
+        msg += " " + offence + " " + crime["victim"] + " (" + crime["victimShip"] + ") in ";
+
+        if (crime['starSystem']) { 
+            msg += crime['starSystem'];
+        } else {
+            msg += ' "space"';
+        }
+
+        if (crime['place']) { 
+            msg += ', ' + crime['place'];
+        }
+
+        return msg;
+      }
+
+      _makeArray(items) {
+        return Object.keys(items).map(function (key) {items[key]});
+      }
+    }
+
+    window.customElements.define(EDRCrimes.is, EDRCrimes);
+  </script>
+</dom-module>

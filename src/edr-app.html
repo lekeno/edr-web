@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -12,10 +13,11 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="edr-icons.html">
 
-<link rel="lazy-import" href="edr-view1.html">
-<link rel="lazy-import" href="edr-view2.html">
-<link rel="lazy-import" href="edr-view3.html">
+<link rel="lazy-import" href="edr-crimes.html">
+<link rel="lazy-import" href="edr-traffic.html">
+<link rel="lazy-import" href="edr-outlaws.html">
 <link rel="lazy-import" href="edr-view404.html">
+<link rel="lazy-import" href="edr-login.html">
 
 <dom-module id="edr-app">
   <template>
@@ -31,8 +33,6 @@
         --app-gray-ui-primary-fg-color: #ffffff;
         --app-gray-ui-secondary-bg-color: #ffffff;
         --app-gray-ui-secondary-fg-color: #000000;
-
-
         display: block;
       }
 
@@ -85,6 +85,15 @@
       }
     </style>
 
+    <firebase-app
+        auth-domain="blistering-inferno-4028.firebaseapp.com"
+        database-url="https://blistering-inferno-4028.firebaseio.com"
+        project-id = "blistering-inferno-4028"
+        api-key="AIzaSyAqyfcDJTKIsIcEXjCG0CwO6D2H4vp-kEg"
+        storage-bucket="blistering-inferno-4028.appspot.com"
+        messaging-sender-id="821701504745">
+    </firebase-app>
+
     <app-location
         route="{{route}}"
         url-space-regex="^[[rootPath]]">
@@ -100,11 +109,12 @@
     <app-drawer-layout fullbleed narrow="{{narrow}}">
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-        <app-toolbar>Menu</app-toolbar>
+        <app-toolbar>Reports</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="[[rootPath]]view1">View One</a>
-          <a name="view2" href="[[rootPath]]view2">View Two</a>
-          <a name="view3" href="[[rootPath]]view3">View Three</a>
+          <a name="crimes" href="[[rootPath]]crimes">Crimes</a>
+          <a name="traffic" href="[[rootPath]]traffic">Traffic</a>
+          <a name="outlaws" href="[[rootPath]]outlaws">Outlaws</a>
+          <a name="login" href="[[rootPath]]login">Login</a>
         </iron-selector>
       </app-drawer>
 
@@ -123,10 +133,11 @@
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <edr-view1 name="view1"></edr-view1>
-          <edr-view2 name="view2"></edr-view2>
-          <edr-view3 name="view3"></edr-view3>
+          <edr-crimes name="crimes"></edr-crimes>
+          <edr-traffic name="traffic"></edr-traffic>
+          <edr-outlaws name="outlaws"></edr-outlaws>
           <edr-view404 name="view404"></edr-view404>
+          <edr-login name="login"></edr-login>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
@@ -159,8 +170,8 @@
 
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
-        // Default to 'view1' in that case.
-        this.page = page || 'view1';
+        // Default to 'crimes' in that case.
+        this.page = page || 'crimes';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {

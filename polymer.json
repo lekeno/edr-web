@@ -2,10 +2,11 @@
   "entrypoint": "index.html",
   "shell": "src/edr-app.html",
   "fragments": [
-    "src/edr-view1.html",
-    "src/edr-view2.html",
-    "src/edr-view3.html",
-    "src/edr-view404.html"
+    "src/edr-crimes.html",
+    "src/edr-traffic.html",
+    "src/edr-outlaws.html",
+    "src/edr-view404.html",
+    "src/edr-login.html"
   ],
   "sources": [
     "src/**/*",

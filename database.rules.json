@@ -75,11 +75,11 @@
             "ship": {
               ".validate": "(newData.val() == 'Unknown' || root.child('ships/' + newData.val()).exists())"
             },
-            "timestamp": {
-              ".validate": "newData.isNumber() && newData.val() <= now"
-            },
             "uid": {
-              ".validate": "newData.val() === auth.uid && root.child('users/' + auth.uid).exists()"
+              ".validate": "newData.val() === auth.uid && root.child('users/' + newData.val()).exists()"
+            },
+						"timestamp": {
+              ".validate": "newData.isNumber()"
             },
             "$other": {
               ".validate": false
@@ -88,7 +88,6 @@
         }
       },
       "traffic" : {
-        //".read" : "(auth != null) && root.child('users').child(auth.uid).child('trusted').val() == true",
         ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/traffic/r/').val() === true",
         "$systemid" : {
           ".write": "(auth != null) && !data.exists() && root.child('users/' + auth.uid +'/p/traffic/w/').val() === true",
@@ -108,7 +107,7 @@
               ".validate": "newData.isString() && newData.val().length <= 255"
             },
             "timestamp": {
-              ".validate": "newData.isNumber() && newData.val() <= now"
+              ".validate": "newData.isNumber()"
             },
             "source": {
               ".validate": "newData.isString() && newData.val().length <= 255"
@@ -145,7 +144,7 @@
               ".validate": "newData.isString() && newData.val().length <= 255"
             },
             "timestamp": {
-              ".validate": "newData.isNumber() && newData.val() <= now"
+              ".validate": "newData.isNumber()"
             },
             "offence": {
               ".validate": "newData.isString() && newData.val().length <= 255"
