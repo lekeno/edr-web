@@ -180,6 +180,33 @@
             }
           }
         }
+      },
+      "sightings" : {
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/sightings/r/').val() === true",
+        ".write": false,
+        ".indexOn": ["cname", "name", "timestamp"],
+        "$sid": {
+          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp'])"
+        }
+      },
+      "interactions" : {
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/interactions/r/').val() === true",
+        ".write": false,
+        ".indexOn": ["cname", "name", "timestamp"],
+        "$iid": {
+          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp'])"
+        }
+      },
+      "outlaws" : {
+        ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/outlaws/r/').val() === true",
+        ".write": false,
+        ".indexOn": ["cname", "name", "timestamp"],
+        "$oid": {
+          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp', 'karma'])",
+          "karma": {
+            ".validate": "newData.isNumber() && newData.val() < 0"
+          }
+        }
       }
     }
   }
