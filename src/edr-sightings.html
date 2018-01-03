@@ -37,25 +37,7 @@
       static get properties() {
         return {
           sightings: {
-            type: Object,
-            observer: 'dataChanged'
-          }
-        }
-      }
-
-      _toArray(obj) {
-        var array = [];
-        for (var key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            console.log(key);
-            for (var id in obj[key]) {
-              if (id != "$key" && obj[key].hasOwnProperty(id)) {
-                console.log(id);
-                array.push(
-                  obj[key][id]
-                );
-              }
-            }
+            type: Object
           }
         }
       }
@@ -126,10 +108,6 @@
         }
 
         return msg;
-      }
-
-      _makeArray(items) {
-        return Object.keys(items).map(function (key) {items[key]});
       }
     }
 

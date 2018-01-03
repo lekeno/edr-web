@@ -16,12 +16,12 @@
     <firebase-auth user="{{user}}"></firebase-auth>
     <firebase-query
       id="query"
-      path="/v1/crimes"
+      path="/v1/interactions"
       data="{{interactions}}"
       limit-to-last="10"
-      order-by-child="timestamp">
+      order-by-child="rtimestamp">
     </firebase-query>
-    <template is="dom-repeat" items="[[_toArray(interactions)]]" as="interaction">
+    <template is="dom-repeat" items="[[interactions]]" as="interaction">
         <div class="card">
             <div class="timelapse">[[_compactTimelapse(interaction)]]</div>
             <h1>[[interaction.starSystem]]</h1>
@@ -37,28 +37,9 @@
       static get properties() {
         return {
           interactions: {
-            type: Object,
-            observer: 'dataChanged'
+            type: Object
           }
         }
-      }
-
-      _toArray(obj) {
-        var array = [];
-        for (var key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            console.log(key);
-            for (var id in obj[key]) {
-              if (id != "$key" && obj[key].hasOwnProperty(id)) {
-                console.log(id);
-                array.push(
-                  obj[key][id]
-                );
-              }
-            }
-          }
-        }
-        return array.reverse();
       }
 
       _compactTimelapse(interaction) {
@@ -146,10 +127,6 @@
         }
 
         return msg;
-      }
-
-      _makeArray(items) {
-        return Object.keys(items).map(function (key) {items[key]});
       }
     }
 
