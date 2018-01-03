@@ -184,25 +184,25 @@
       "sightings" : {
         ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/sightings/r/').val() === true",
         ".write": false,
-        ".indexOn": ["cname", "name", "timestamp"],
+        ".indexOn": ["cname", "name", "timestamp", "rtimestamp"],
         "$sid": {
-          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp'])"
+          ".validate" : "newData.hasChildren(['name', 'cname', 'timestamp', 'rtimestamp'])"
         }
       },
       "interactions" : {
         ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/interactions/r/').val() === true",
         ".write": false,
-        ".indexOn": ["cname", "name", "timestamp"],
+        ".indexOn": ["cname", "name", "timestamp", "rtimestamp"],
         "$iid": {
-          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp'])"
+          ".validate" : "newData.hasChildren(['name', 'cname', 'timestamp', 'rtimestamp'])"
         }
       },
       "outlaws" : {
         ".read" : "(auth != null) && root.child('users/' + auth.uid +'/p/outlaws/r/').val() === true",
         ".write": false,
-        ".indexOn": ["cname", "name", "timestamp"],
+        ".indexOn": ["cname", "name", "timestamp", "rtimestamp"],
         "$oid": {
-          ".validate" : "newData.hasChildren(['name', 'cname', 'rtimestamp', 'karma'])",
+          ".validate" : "newData.hasChildren(['name', 'cname', 'timestamp', 'rtimestamp', 'karma'])",
           "karma": {
             ".validate": "newData.isNumber() && newData.val() < 0"
           }

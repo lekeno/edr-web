@@ -14,23 +14,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>edr-crimes</title>
+    <title>edr-interactions</title>
 
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
     <!-- Import the element to test -->
-    <link rel="import" href="../src/edr-crimes.html">
+    <link rel="import" href="../src/edr-interactions.html">
   </head>
   <body>
     <test-fixture id="BasicView">
       <template>
-        <edr-crimes></edr-crimes>
+        <edr-interactions></edr-interactions>
       </template>
     </test-fixture>
 
     <script>
-      suite('edr-crimes tests', function() {
+      suite('edr-interactions tests', function() {
         test('Number in circle should be 1', function() {
           var edrView = fixture('BasicView');
           var circle = edrView.shadowRoot.querySelector('.circle');

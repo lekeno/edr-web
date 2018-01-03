@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="edr-crimes">
+<dom-module id="edr-interactions">
   <template>
     <style include="shared-styles">
       :host {
@@ -17,26 +17,26 @@
     <firebase-query
       id="query"
       path="/v1/crimes"
-      data="{{crimes}}"
+      data="{{interactions}}"
       limit-to-last="10"
       order-by-child="timestamp">
     </firebase-query>
-    <template is="dom-repeat" items="[[_toArray(crimes)]]" as="crime">
+    <template is="dom-repeat" items="[[_toArray(interactions)]]" as="interaction">
         <div class="card">
-            <div class="boxed">[[_compactTimelapse(crime)]]</div>
-            <h1>[[crime.starSystem]]</h1>
-            <p>[[_readableCrime(crime)]]</p>
+            <div class="timelapse">[[_compactTimelapse(interaction)]]</div>
+            <h1>[[interaction.starSystem]]</h1>
+            <p>[[_readableInteraction(interaction)]]</p>
         </div>
     </template>
   </template>
 
   <script>
-    class EDRCrimes extends Polymer.Element {
-      static get is() { return 'edr-crimes'; }
+    class EDRInteractions extends Polymer.Element {
+      static get is() { return 'edr-interactions'; }
 
       static get properties() {
         return {
-          crimes: {
+          interactions: {
             type: Object,
             observer: 'dataChanged'
           }
@@ -61,8 +61,8 @@
         return array.reverse();
       }
 
-      _compactTimelapse(crime) {
-        var timestamp= crime["timestamp"];
+      _compactTimelapse(interaction) {
+        var timestamp= interaction["timestamp"];
         var present = Date.now();
         
         var qualifier = "T-";
@@ -116,7 +116,7 @@
         return qualifier + "    " +  String("00" + seconds).slice(-2) + "s";
       }
 
-      _readableCrime(crime) {
+      _readableInteraction(interaction) {
         let lutOffences = {
             "Interdiction" : "interdicted",
             "Interdicted" : "interdicted",
@@ -125,24 +125,24 @@
             "Failed interdiction": "attempted to interdict"
         };
 
-        console.log("criminals nb: " + crime["criminals"].length)
-        let criminal = crime["criminals"][0];
+        console.log("criminals nb: " + interaction["criminals"].length)
+        let criminal = interaction["criminals"][0];
         let msg = criminal["name"];
         if (criminal["ship"] != "Unknown") {
             msg +=  " (" + criminal["ship"] + ")";
         }
-        var offence = lutOffences[crime["offence"]];
-        if (offence === undefined) { offence = crime["offence"]; }
-        msg += " " + offence + " " + crime["victim"] + " (" + crime["victimShip"] + ") in ";
+        var offence = lutOffences[interaction["offence"]];
+        if (offence === undefined) { offence = interaction["offence"]; }
+        msg += " " + offence + " " + interaction["victim"] + " (" + interaction["victimShip"] + ") in ";
 
-        if (crime['starSystem']) { 
-            msg += crime['starSystem'];
+        if (interaction['starSystem']) { 
+            msg += interaction['starSystem'];
         } else {
             msg += ' "space"';
         }
 
-        if (crime['place']) { 
-            msg += ', ' + crime['place'];
+        if (interaction['place']) { 
+            msg += ', ' + interaction['place'];
         }
 
         return msg;
@@ -153,6 +153,6 @@
       }
     }
 
-    window.customElements.define(EDRCrimes.is, EDRCrimes);
+    window.customElements.define(EDRInteractions.is, EDRInteractions);
   </script>
 </dom-module>

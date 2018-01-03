@@ -2,8 +2,8 @@
   "entrypoint": "index.html",
   "shell": "src/edr-app.html",
   "fragments": [
-    "src/edr-crimes.html",
-    "src/edr-traffic.html",
+    "src/edr-interactions.html",
+    "src/edr-sightings.html",
     "src/edr-outlaws.html",
     "src/edr-view404.html",
     "src/edr-login.html"

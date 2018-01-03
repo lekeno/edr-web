@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="edr-outlaws">
+<dom-module id="edr-sightings">
   <template>
     <style include="shared-styles">
       :host {
@@ -16,7 +16,7 @@
     <firebase-auth user="{{user}}"></firebase-auth>
     <firebase-query
       id="query"
-      path="/v1/outlaws"
+      path="/v1/sightings"
       data="{{sightings}}"
       limit-to-last="10"
       order-by-child="rtimestamp">
@@ -25,18 +25,18 @@
         <div class="card">
             <div class="timelapse">[[_compactTimelapse(sighting)]]</div>
             <h1>[[sighting.starSystem]]</h1>
-            <p>[[_readableOutlaw(sighting)]]</p>
+            <p>[[_readableSighting(sighting)]]</p>
         </div>
     </template>
   </template>
 
   <script>
-    class EDROutlaws extends Polymer.Element {
-      static get is() { return 'edr-outlaws'; }
+    class EDRSightings extends Polymer.Element {
+      static get is() { return 'edr-sightings'; }
 
       static get properties() {
         return {
-          outlaws: {
+          sightings: {
             type: Object,
             observer: 'dataChanged'
           }
@@ -115,7 +115,7 @@
         return qualifier + "    " +  String("00" + seconds).slice(-2) + "s";
       }
 
-      _readableOutlaw(sighting) {
+      _readableSighting(sighting) {
         let msg = sighting["cmdr"];
         if (sighting["ship"] != "Unknown") {
             msg +=  " (" + sighting["ship"] + ")";
@@ -133,6 +133,6 @@
       }
     }
 
-    window.customElements.define(EDROutlaws.is, EDROutlaws);
+    window.customElements.define(EDRSightings.is, EDRSightings);
   </script>
 </dom-module>
