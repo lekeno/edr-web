@@ -18,7 +18,7 @@
       id="query"
       path="/v1/interactions"
       data="{{interactions}}"
-      limit-to-last="10"
+      limit-to-first="10"
       order-by-child="rtimestamp">
     </firebase-query>
     <template is="dom-repeat" items="[[interactions]]" as="interaction">
